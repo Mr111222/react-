@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="gb2312">
+	<title>Document</title>
+</head>
+	<script src="../build/react.js"></script>
+    <script src="../build/react-dom.js"></script>
+    <script src="../build/browser.min.js"></script>
+<body>
+	<div id="example"></div>
+	<div id="example1"></div>
+	<script type="text/babel">
+		class Parent extends React.Component{
+			constructor(){
+				super()
+				this.state = {
+					msg:'我是父组件数据'
+				}
+			}
+
+			handle(){
+				this.setState({
+					msg:this.state.msg.split('').reverse().join('')
+				})
+			}
+			render(){
+				return (
+					<div>
+					<p>父组件向子组件传递，并且父组件更改，子组件也随着更改</p>
+						<div onClick={this.handle.bind(this)}>父组件----->{this.state.msg}</div>
+						<Child msg={this.state.msg} />
+					</div>
+					
+				)
+			}
+		}
+
+		class Child extends React.Component{
+			constructor(){
+				super();
+			}
+			render(){
+				return (
+					<div>子组件----->{this.props.msg?this.props.msg:'暂无数据'}</div>
+				)
+			}
+		}
+
+		 ReactDOM.render((
+          <Parent/>
+      ), document.getElementById('example'))
+
+		class Parent1 extends React.Component{
+			
+		 	constructor(){
+				super()
+				this.state = {
+					msg:''||'暂无数据'
+				}
+			}
+
+			//通过props来执行一个回调函数
+			changes(msg){
+				this.setState({
+					msg:msg
+				})
+			}
+			render(){
+				return (
+					<div>
+					<p>子组件向父组件传递，并且子组件更改，父组件也随着更改</p>
+						<div>父组件----->{this.state.msg}</div>
+						<Child1 getMsgFn = {this.changes.bind(this)} />
+					</div>
+					
+				)
+			}
+		}
+
+		class Child1 extends React.Component{
+			constructor(){
+				super()
+				this.state = {
+					msg:'我是子组件数据'
+				}
+			}
+			componentDidMount(){
+				this.props.getMsgFn(this.state.msg);
+			}
+
+			getMsg(){
+				const str = this.state.msg.split('').reverse().join('');
+				this.props.getMsgFn(str);
+				this.setState({
+					msg:str
+				})
+			}
+			render(){
+				return (
+					<div onClick={this.getMsg.bind(this)}>子组件----->{this.state.msg}</div>
+				)
+			}
+		}
+
+		 ReactDOM.render((
+          <Parent1/>
+      ), document.getElementById('example1'))
+
+
+
+
+	</script>
+	
+</body>
+</html>
